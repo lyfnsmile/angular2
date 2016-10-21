@@ -1,5 +1,7 @@
 REGEX对象
 
+这是对慕课网[javascript正则表达式](http://www.imooc.com/learn/706)的总结。
+
 验证网站[https://regexper.com/](https://regexper.com/)
 
 ## 第一节 简介
@@ -247,7 +249,7 @@ var reg=/(\d{4})-(\d{2})-(\d{2})/g;
 >  必须在分组中使用
 
 ### 忽略分组
-如果不希望捕获某些分组，只需要在分组内加上?:就可以了
+- 如果不希望捕获某些分组，只需要在分组内加上?:就可以了
 
 ```javascript
 var reg=/(?:\d{4})-(\d{2})-(\d{2})/g;
@@ -258,3 +260,148 @@ var reg=/(?:\d{4})-(\d{2})-(\d{2})/g;
 ```
 
 ## 第九节  前瞻
+
+- 正则表达式从文本头部向尾部解析，文本尾部方向称为"前"
+
+- 前瞻就是在正则表达式匹配到规则的时候，向前检查是否符合断言
+
+正则表达式还有一个与之对应的概念叫"后顾"，后顾就是向后检查是否符合断言
+
+但是在javascript中并不支持这种后顾表达式
+
+
+[符合和不符合某种断言有被称为肯定/正向匹配和否定/负向匹配]
+
+|  名称      |正则表达式  |   含义    |
+| :-------: | :--------: |:--------: |
+|   正向前瞻    |exp(?=assert)|      |
+|   负向前瞻    |exp(?!assert)|      |
+
+(assert)：断言语句  exp:正则表达式
+
+
+```javascript
+var reg=/\w(?=\d)/g;
+'a2*34v8'.replace(reg,'H');
+
+//"H2*H4H8"
+
+```
+
+
+```javascript
+var reg=/\w(?!\d)/g;
+'a2*34v8'.replace(reg,'H');
+
+//aH*3HvH
+
+```
+
+
+## 第十节  正则表达式对象属性
+
+
+- 正则表达式属于对象，是对象就会有自身的属性。
+例如：
+var reg=/\w/gim;
+
+其中： g、i、m都是正则表达式的属性。是不可修改的
+```
+reg.global//true
+
+reg.ignoreCase//true
+```
+
+
+reg.source//正则表达式的文本内容  `/\w/gim`
+reg.lastIndex  //当前匹配结果的最后一个字符的下一个字符的位置
+
+## 第十一节  正则表达式对象方法
+
+
+- RegEx.prototype.text(str):
+
+由于测试特定字符串师傅符合正则表达式的规则，return value 类型为boolean
+
+- RegEx.prototype.exec(str):
+
+使用正则表达式模式对字符串执行搜索，并将更新全局RegExp对象的属性以反映匹配结果
+
+如果没有匹配的文本则返回null，否则返回一个结果数组
+
+
+## 第十二节  字符串相关方法
+
+- String.prototype.search(reg)
+
+可以接受字符或正则表达式
+
+return Number。如果匹配到了返回其所在字符串中的位置，泛指返回-1
+
+- String.prototype.match(reg)
+
+return Array  如果没有匹配的文本则返回null
+
+- String.prototype.split(reg)
+
+可以接受字符或正则表达式
+
+```
+var reg=/\d/;
+
+'0a1b2c3d4'.split(reg,[string|function])
+
+//["", "a", "b", "c", "d", ""]
+
+```
+
+- String.prototype.replace(reg)
+
+在前面的示例中多次使用到了replace方法
+
+在这里演示第二个参数是Function类型的情况:
+
+function在每次匹配替换的时候调用，最多接受四种参数
+
+1. 匹配字符串
+2. 正则表达式分组内容，没有分组则没有该参数
+3. 匹配项在字符串中的位置
+4. 原字符串
+
+
+
+如果想要实现将匹配的数字都加一，应该怎么写呢???
+
+```
+
+var reg=/\d/g;
+
+'w1y2ydg3d6'.replace(reg,function(match,index,origin){
+    console.log(index)
+    return parseInt(match)+1;
+})
+
+
+//1,3,7,9
+//"w2y3ydg4d7"
+
+```
+
+再举一个包含分组的复杂例子;
+
+过滤掉分组三的结果集
+
+```
+var reg=/(\d)(\w)(\d)/g;
+
+'w1y2ydg3d6'.replace(reg,function(match,group1,group2,group3,index,origin){
+    console.log(match,group1)
+    return group1+group2
+})
+
+
+//1y2   // 3d6
+//"w1yydg3d"
+```
+
+
